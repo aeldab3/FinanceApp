@@ -34,5 +34,32 @@ namespace FinanceApp.Data.Service
                 });
             return chartData;
         }
+
+        public Task<Expense?> GetExpenseByIdAsync(int id)
+        {
+            var expense = _context.Expenses.FirstOrDefaultAsync(e => e.Id == id);
+            return expense;
+        }
+        public Task UpdateExpenseAsync(Expense expense)
+        {
+            if (expense == null)
+            {
+                throw new ArgumentNullException(nameof(expense));
+            }
+            _context.Expenses.Update(expense);
+            return _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteExpenseAsync(int id)
+        {
+            var expense = await _context.Expenses.FindAsync(id);
+            if (expense == null)
+            {
+                throw new KeyNotFoundException($"Expense with ID {id} not found.");
+            }
+            _context.Expenses.Remove(expense);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }
